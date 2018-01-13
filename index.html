@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://code.jquery.com/ui/jquery-ui-git.css">
+		<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+			<script
+			  src="http://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
+			  integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
+			  crossorigin="anonymous">
+		</script>
+
+
+		<script src="MenuDrive.js"></script>
+		<style>
+		body { margin: 1em; }
+		a.trigger { cursor: pointer; }
+		img { width: 100%; }
+		h1 { border-bottom: 1px solid gray; }
+		#content { border: 1px solid gray; min-width: 500px; min-height: 300px; background: #eee; padding: 1em 2em; margin: 2em;}
+		.wide { margin: 2em; }
+		/*a:visited { background: gray; }*/
+		</style>
+</head>
+<body>
+
+<h1>MiniMenuSPA</h1>
+
+<div class="row">
+	<div class="col-lg-6">
+		<div class="row wide">
+			<h3>Main menu: functions available</h3>
+				<ul id="main-menu">
+					<li  id="one"   class="trigger">Set inline HTML content</li>
+					<li  id="six"   class="trigger">Load an image</li>		
+					<li  id="two"   class="trigger">Run an arbitrary javascript function</li>
+					<li  id="three" class="trigger">Load a file from server</li>
+					<li  id="five"  class="trigger">Ajax get : run a script</li>
+					<li  id="four"  class="trigger">Run a Dialog</li>
+					<li  id="seven" class="trigger">Redirect to arbitrary location</li>			
+				</ul>
+			<div id="content" ></div>
+		</div>
+	</div>
+	
+	<div class="col-lg-6">
+		<h3>Super simple Single page app framework</h3>
+		<h4>Basic Concept:</h4>
+		<p>A menu is a list of available actions that modifies the contents of the HTML page. In HTML, a menu is usually an unordered list <code>&lt;ul&gt;</code> and an action is
+			usually a javascript function of some kind. Simply put, this library allows you to bind menu id numbers to a specific javascript 
+			function that modify the contents of a target DOM id in the document, usually a <code>&lt;div&gt;</code>.
+		</p>
+		<h4>Advantages</h4>
+		<p>Declutter the menu's HTML (separation of form and function), allow for simple ajax functions out of the box, 
+			create simple Single Page Applications without deep knowledge of frameworks or ajax. </p>
+		<h4>Requirements</h4>
+		<p>This library depends on the <code>jquery</code> library and the <code>MenuDrive.js</code> script. Additionally, and only for 
+		the dialog function you need the jquery-ui library. I use boostrap for this demo, but there is no particular CSS requirements.</p>
+		<h4>Features</h4>
+		<p>The library allows for multiple menus on the same page and provide a basic set of wrappers to populate the target zone:</p>
+		<ul>
+			<li>Set the target HTML</li>
+			<li>Run an arbitrary javascript function</li>
+			<li>Populate the target with the contents of a file on the server</li>
+			<li>Run a dialog with a callback function</li>
+			<li>Load content from a script</li>
+			<li>Load an image</li>
+			<li>Redirect the page</li>
+			<li>Trigger menu actions from within the page</li>
+		</ul>
+	</div>
+</div>
+
+
+<div class="row wide">
+	<h1>Steps in setting up your menu drive:</h1>
+		<ul id="steps-menu" class="list-inline">	
+			<li id="step-one" class="trigger">Step one >> </li>
+			<li id="step-two" class="trigger">Step two >> </li>
+			<li id="step-three" class="trigger">Step three >> </li>
+			<li id="step-four" class="trigger">Step four >> </li>
+			<li id="step-five" class="trigger">Triggers </li>
+		</ul>
+	<div id="steps"></div>
+	
+	<div style="margin: 2em 1em; border-top: 1px gray solid;">
+	<p><strong>For more information and examples, download the zip file and study the page source of this document.</strong></p>
+	</div>
+</div>
+
+
+<script>
+
+	var main_menu = new MenuDrive( { menu_id: "main-menu", dom_id: 'content', default_html: 'snippet.html', history: true }  );
+
+		main_menu.set_functions({
+			'one': 		function(){ main_menu.setHtml( '<h4>One: load inline HTML: function name: setHtml() </h4>' ); },
+			'two': 		function(){ alert( 'Run any javascript function: function alert();'); },
+			'three': 	function(){ main_menu.openFile( 'snippet.txt'); },
+			'four': 	function(){ main_menu.dialog( { url: 'snippet.txt'}); },
+			'five': 	function(){ main_menu.jget( { url: 'jget.php', params: { number: 2, menu_id: main_menu.menu_id} }); },
+			'six': 		function(){ main_menu.openImage('female-flutist.png'); },
+			'seven': 	function(){ main_menu.redirectPage( 'https://google.com'); }		
+		});
+		
+		
+		function load_text(div_id, menu_id) {	
+			steps_menu.set_active_id(menu_id);	
+			$('div#steps').load('steps.html  #' + div_id);
+			$("#steps-menu li").css('background', 'transparent');
+			$("#steps-menu li#" + menu_id).css('background', '#ddd');
+		}
+		
+		var steps_menu = new MenuDrive( { menu_id: "steps-menu", dom_id: 'steps' }  );	
+		steps_menu.set_functions( {
+			 'step-one': 	function() { load_text('step_1', 'step-one'); },
+			 'step-two': 	function() { load_text('step_2', 'step-two'); },
+			 'step-three': 	function() { load_text('step_3', 'step-three'); },
+			 'step-four': 	function() { load_text('step_4', 'step-four'); },
+			 'step-five': 	function() { load_text('step_5', 'step-five'); }		
+		});
+	
+		$('document').ready( function() {
+			steps_menu.triggerLink('step-one');
+		});
+		
+</script>
+</body>
+
+</html>

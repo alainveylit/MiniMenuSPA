@@ -1,0 +1,93 @@
+<div id="step_1">
+	<h4 >I: Create ul menu and li elements: <span class="pull-right"><a href="javascript:" rel="step-two" class="menu-link">Next</a></span></h4>
+			
+	<pre>
+	<code>
+	&lt;ul id="main-menu"&gt;
+		&lt;li  id="one" class=trigger" &gt;Set inline HTML content&lt;/li&gt;
+		&lt;li  id="two" class=trigger"&gt;Alert&lt;/li&gt;
+		&lt;li  id="three" class=trigger"&gt;Load file&lt;/li&gt;
+		&lt;li  id="four" class=trigger"&gt;Dialog&lt;/li&gt;
+		&lt;li  id="five" class=trigger"&gt;Ajax get&lt;/li&gt;
+		&lt;li  id="six" class=trigger"&gt;Load image&lt;/li&gt;		
+		&lt;li  id="seven" class=trigger"&gt;Redirect&lt;/li&gt;
+		&lt;li&gt;&lt;a href="my_super_long_link_to_something"&gt;Normal and complicated way of doing things&lt;/a&gt;&lt;/li&gt;			
+				
+	&lt;/ul&gt;
+	</code>
+	</pre>	
+	<p>Note: Adding the class "trigger" to your menu li elements will automatically add the <code>&lt;a&gt;</code> 
+	 needed to trigger the actions. This greatly simplifies the creation and management of complex menus. It also allows you to 
+	 add unbound elements by simply omitting that class.
+	</p>
+</div>
+<div id="step_2">
+	<h4 >II: Set a target div: <span class="pull-right"><a href="javascript:" rel="step-three" class="menu-link">Next</a></span></h4>
+	<code>
+			&lt;div id="menu-content" &gt;&lt;/div&gt;
+	</code>
+	<p>The target DOM element can be anywhere in the document's body and it must have a unique id. It can be the whole content area of the document or just a section.
+	I have not tested this, but other elements besides a <code>div</code> should be possible.
+	</p>
+</div> 
+<div id="step_3">
+	<h4 >III: Create a menu drive: <span class="pull-right"><a href="javascript:" rel="step-four" class="menu-link">Next</a></span></h4>
+
+	<code>var main_menu = new MenuDrive( { menu_id: "main-menu", dom_id: 'content', default_html: 'snippet.html' }  );</code>
+	<p>Possible parameters are:
+		<ol><li>
+			<code>menu_id</code>: required. This is your ul menu id.</li><li>
+			<code>dom_id</code>: required. This is your target element, usually a <code>div</code>.</li><li>
+			<code>default_html</code>: optional. This would populate the target div with a default content obtained from a url when the page is first loaded.</li>			
+			<li><code>history</code>: optional. Set to true to create history for menu actions. Default is false. </li>
+			<li><code>menu_functions</code>: optional. The associative list of functions to bind to the menu.
+			</li>
+		</ol>
+	</p>
+	<p>This code resides with a <code>&lt;script&gt;&lt;/script&gt;</code> section usually at the end of the page. 
+	New menu drives can be loaded from ajax calls (load).
+	</p>
+</div>
+<div id="step_4">
+	<h4 >IV. Associate functions to menu ids: <span class="pull-right"><a href="javascript:" rel="step-five" class="menu-link">Next</a></span></h4>
+	<pre>
+	<code>
+	main_menu.set_functions({
+		'one': 	function(){ main_menu.setHtml( '&lt;h4&gt;One: load inline HTML: function name: setHtml() &lt;/h4&gt;' ); },
+		'two': 	function(){ alert( 'Run any javascript function: function alert();'); },
+		'three':function(){ main_menu.openFile( 'snippet.txt'); },
+		'four': function(){ main_menu.dialog( { url: 'snippet.txt'}); },
+		'five': function(){ main_menu.jget( { url: 'jget.php', params: { number: 2, menu_id: main_menu.menu_id} }); },
+		'six': 	function(){ main_menu.openImage('female-flutist.png'); },
+		'seven':function(){ main_menu.redirectPage( 'https://google.com'); }			
+	});
+	</code>
+	</pre>
+	<p>Although you can bind functions to menu ids directly in the constructor, I find it easier to use the function <code>set_functions</code> as a second step. 
+	The <code>set_functions</code> function takes a javascript object list as a parameter that associates a menu id to a specific javascript function.
+	You can also define it separately and then load it:
+	<pre>
+	<code>var menu_functions = { one: function() { alert('one'); }, two: function() {main_menu.openFile('two.txt');}, three: function() { main_menu.jget({url: 'my_script.php'});} };</code>
+	<code>main_menu.set_functions( menu_functions );</code>
+	</pre>
+	</p>
+	<p>Note that the menu function require the menu definition: <code>two: main_menu.openFile('two.txt')</code> for all functions defined by the library.
+	Although apparently redundent, this allows you to bind a menu drive link to another menu defined on the same page. <code>this</code> is not available 
+	and meaningless in this context.
+	</p>
+	<p>Pay attention to the syntax of the menu functions definitions, as it is the most prone to errors. A missing comma at the end of 
+	a function will break the whole script. 
+	</p>
+	<p>Although heavily reliant on jquery, you do not necessarily need to call the <code>$('document').ready( ...</code> function.
+	</p>
+</div> 
+<div id="step_5">
+	<h4 >V. Triggering menu links</h4>	
+	<p>If you need to trigger a menu link from within the document, give your <code>&lt;a&gt;</code> element the class 
+	<code>menu-link</code> and add a rel attribute with the id of the menu action: <br>
+	<code>&lt;a class="menu-link" rel="menu-id"&gt;Take me there!&lt;a&gt;</code></p>
+	<p>You can also use the menu drive function <code>my_menu.triggerLink("menu-action")</code> directly from a script section within the document.</p>
+	<p>You can open a document with the menu trigger set by using the hash followed by an exclamation mark and the id of the menu action.
+	<br><code>&lt;a href="http://my_document#!menu-action"&gt;Take me there!&lt;a&gt;</code>
+	</p>
+

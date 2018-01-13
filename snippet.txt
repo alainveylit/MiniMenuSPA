@@ -1,0 +1,4 @@
+<div>
+<h4>Snippet of HTML loaded from file: see "snippet.txt"</h4>
+<p>Function name: openFile('filename');
+</div>
